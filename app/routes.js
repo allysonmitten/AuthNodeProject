@@ -1,16 +1,12 @@
 // app/routes.js
+
 module.exports = function(app, passport) {
 
-    // =====================================
-    // HOME PAGE (with login links) ========
-    // =====================================
+    // Homepage route
     app.get('/', function(req, res) {
         res.render('index.ejs'); // load the index.ejs file
     });
 
-    // =====================================
-    // LOGIN ===============================
-    // =====================================
     // show the login form
     app.get('/login', function(req, res) {
 
@@ -25,9 +21,6 @@ module.exports = function(app, passport) {
         failureFlash : true // allow flash messages
     }));
 
-    // =====================================
-    // SIGNUP ==============================
-    // =====================================
     // show the signup form
     app.get('/signup', function(req, res) {
 
@@ -43,9 +36,7 @@ module.exports = function(app, passport) {
     }));
 
 
-    // =====================================
-    // PROFILE SECTION =====================
-    // =====================================
+    //route for  showing profile page
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function(req, res) {
@@ -53,6 +44,16 @@ module.exports = function(app, passport) {
             user : req.user // get the user out of session and pass to template
         });
     });
+
+    //Route for facebook auth
+    app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+
+    // handle the callback after facebook has authenticated the user
+    app.get('/auth/facebook/callback',
+        passport.authenticate('facebook', {
+            successRedirect : '/profile',
+            failureRedirect : '/'
+        }));
 
     // =====================================
     // LOGOUT ==============================
